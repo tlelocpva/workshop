@@ -27,18 +27,19 @@ public class DummyContent {
 
     static {
         // Add some sample items.
-        for (int i = 1; i <= COUNT; i++) {
-            addItem(createDummyItem(i));
-        }
+        addItem(new DummyItem("Andrei", 35));
+        addItem(new DummyItem("Armani", 0));
+        addItem(new DummyItem("Bernardo", 2));
+        addItem(new DummyItem("Eduardo", 0));
+        addItem(new DummyItem("Felipe", 2));
+        addItem(new DummyItem("Gabriel", 0));
+        addItem(new DummyItem("Geovane", 1));
+        addItem(new DummyItem("Hélio", 5));
     }
 
     private static void addItem(DummyItem item) {
         ITEMS.add(item);
-        ITEM_MAP.put(item.id, item);
-    }
-
-    private static DummyItem createDummyItem(int position) {
-        return new DummyItem(String.valueOf(position), "Item " + position, makeDetails(position));
+        ITEM_MAP.put(item.name, item);
     }
 
     private static String makeDetails(int position) {
@@ -54,19 +55,17 @@ public class DummyContent {
      * A dummy item representing a piece of content.
      */
     public static class DummyItem {
-        public final String id;
-        public final String content;
-        public final String details;
+        public final String name;
+        public final int points;
 
-        public DummyItem(String id, String content, String details) {
-            this.id = id;
-            this.content = content;
-            this.details = details;
+        public DummyItem(String name, int points) {
+            this.name = name;
+            this.points = points;
         }
 
         @Override
         public String toString() {
-            return content;
+            return name;
         }
     }
 }
