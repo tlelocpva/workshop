@@ -1,14 +1,26 @@
 package br.pucrs.elo.vacilationpoints;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import java.util.List;
+
+import br.pucrs.elo.vacilationpoints.dummy.DummyContent;
+import br.pucrs.elo.vacilationpoints.worker.Vacillation;
 
 /**
  * An activity representing a single worker detail screen. This
@@ -29,8 +41,16 @@ public class workerDetailActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                /*Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();*/
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_EMAIL, "tl.elo@cpca.pucrs.br");
+                intent.putExtra(Intent.EXTRA_SUBJECT, "Notes about worker");
+                intent.putExtra(Intent.EXTRA_TEXT, "Dear TL,\n I want to inform you that your employee arrived late to work today.\n Att,\nVacillation Points APP");
+
+                startActivity(Intent.createChooser(intent, "Send Email"));
+
             }
         });
 
@@ -61,6 +81,23 @@ public class workerDetailActivity extends AppCompatActivity {
                     .add(R.id.worker_detail_container, fragment)
                     .commit();
         }
+
+        CollapsingToolbarLayout c = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+        if(getIntent().getStringExtra(workerDetailFragment.ARG_ITEM_ID).equals("Eduardo Lorandi")){
+            c.setBackgroundResource(R.drawable.bug);
+        } else if(getIntent().getStringExtra(workerDetailFragment.ARG_ITEM_ID).equals("Andrei Martins")){
+            c.setBackgroundResource(R.drawable.smoke);
+        } else if(getIntent().getStringExtra(workerDetailFragment.ARG_ITEM_ID).equals("Bernardo Koefender")){
+            c.setBackgroundResource(R.drawable.smoke);
+        }
+
+        /*View recyclerView = findViewById(R.id.worker_detail);
+        assert recyclerView != null;
+        setupRecyclerView((RecyclerView) recyclerView);*/
+    }
+
+    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEM_MAP.get(getIntent().getStringExtra(workerDetailFragment.ARG_ITEM_ID)).getVacillationList()));
     }
 
     @Override
@@ -77,5 +114,59 @@ public class workerDetailActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /*#####################################################################################################*/
+    public class SimpleItemRecyclerViewAdapter
+            extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
+
+        private final List<Vacillation> mValues;
+
+        public SimpleItemRecyclerViewAdapter(List<Vacillation> items) {
+            mValues = items;
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.worker_list_vacillation, parent, false);
+
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(final ViewHolder holder, int position) {
+            Vacillation v = mValues.get(position);
+
+            holder.mTextVaciPoints.setText(String.valueOf(mValues.get(position).getValue()));
+            holder.mTextVaciText.setText(mValues.get(position).getType());
+            holder.mTextVaciDate.setText(mValues.get(position).getDate());
+        }
+
+        @Override
+        public int getItemCount() {
+            return mValues.size();
+        }
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+            public final View mView;
+            public final TextView mTextVaciPoints;
+            public final TextView mTextVaciText;
+            public final TextView mTextVaciDate;
+
+            public ViewHolder(View view) {
+                super(view);
+
+                mView = view;
+                mTextVaciPoints = (TextView) view.findViewById(R.id.vaci_points);
+                mTextVaciText = (TextView) view.findViewById(R.id.vaci_text);
+                mTextVaciDate = (TextView) view.findViewById(R.id.vaci_date);
+            }
+
+            @Override
+            public String toString() {
+                return super.toString() + " '" + "'";
+            }
+        }
     }
 }

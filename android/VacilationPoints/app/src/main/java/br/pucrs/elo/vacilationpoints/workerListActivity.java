@@ -19,6 +19,8 @@ import android.widget.TextView;
 
 
 import br.pucrs.elo.vacilationpoints.dummy.DummyContent;
+import br.pucrs.elo.vacilationpoints.worker.Vacillation;
+import br.pucrs.elo.vacilationpoints.worker.Worker;
 
 import java.util.List;
 
@@ -47,14 +49,14 @@ public class workerListActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });
+        });*/
 
         View recyclerView = findViewById(R.id.worker_list);
         assert recyclerView != null;
@@ -76,11 +78,11 @@ public class workerListActivity extends AppCompatActivity {
     public class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
-        private final List<DummyContent.DummyItem> mValues;
+        private final List<Worker> mValues;
 
 
 
-        public SimpleItemRecyclerViewAdapter(List<DummyContent.DummyItem> items) {
+        public SimpleItemRecyclerViewAdapter(List<Worker> items) {
             mValues = items;
         }
 
@@ -93,10 +95,13 @@ public class workerListActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
-            int points = mValues.get(position).points;
+            int points = 0;
+            List<Vacillation> vlist = mValues.get(position).getVacillationList();
+
+            for(Vacillation v: vlist ) { points += v.getValue(); }
 
             holder.mItem = mValues.get(position);
-            holder.mTextName.setText(mValues.get(position).name);
+            holder.mTextName.setText(mValues.get(position).getName());
             holder.mTextPoints.setText(String.valueOf(points) );
 
             if( points > 5)
@@ -111,7 +116,7 @@ public class workerListActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     if (mTwoPane) {
                         Bundle arguments = new Bundle();
-                        arguments.putString(workerDetailFragment.ARG_ITEM_ID, holder.mItem.name);
+                        arguments.putString(workerDetailFragment.ARG_ITEM_ID, holder.mItem.getName());
                         workerDetailFragment fragment = new workerDetailFragment();
                         fragment.setArguments(arguments);
                         getSupportFragmentManager().beginTransaction()
@@ -120,7 +125,7 @@ public class workerListActivity extends AppCompatActivity {
                     } else {
                         Context context = v.getContext();
                         Intent intent = new Intent(context, workerDetailActivity.class);
-                        intent.putExtra(workerDetailFragment.ARG_ITEM_ID, holder.mItem.name);
+                        intent.putExtra(workerDetailFragment.ARG_ITEM_ID, holder.mItem.getName());
 
                         context.startActivity(intent);
                     }
@@ -138,7 +143,7 @@ public class workerListActivity extends AppCompatActivity {
             public final ImageView mImageView;
             public final TextView mTextName;
             public final TextView mTextPoints;
-            public DummyContent.DummyItem mItem;
+            public Worker mItem;
 
             public ViewHolder(View view) {
                 super(view);

@@ -1,5 +1,6 @@
 package br.pucrs.elo.vacilationpoints.worker;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -9,7 +10,18 @@ public class Worker {
     private int id;
     private String name;
     private String image;
-    private List<Vacilation> vacilationList;
+    private List<Vacillation> vacillationList;
+
+    public Worker(int id, String name, String image) {
+        this.id = id;
+        this.name = name;
+        this.image = image;
+        vacillationList = new ArrayList<>();
+    }
+
+    public void addVacillation(Vacillation vacillation){
+        vacillationList.add(vacillation);
+    }
 
     public int getId() {
         return id;
@@ -35,11 +47,11 @@ public class Worker {
         this.image = image;
     }
 
-    public List<Vacilation> getVacilationList() {
-        return vacilationList;
+    public List<Vacillation> getVacillationList() {
+        return vacillationList;
     }
 
-    public void setVacilationList(List<Vacilation> vacilationList) {
-        this.vacilationList = vacilationList;
+    public void setVacillationList(List<Vacillation> vacillationList) {
+        this.vacillationList = vacillationList;
     }
 }
